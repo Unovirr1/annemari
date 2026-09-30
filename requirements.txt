@@ -1,0 +1,5 @@
+Flask==3.1.3
+googletrans==4.0.2
+pymorphy3==2.0.6
+pymorphy3-dicts-ru==2.4.417150.4580142
+pypdf==6.19.0

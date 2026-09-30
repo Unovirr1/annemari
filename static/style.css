@@ -1,0 +1,80 @@
+/* ============================================================
+   СЧАСТЛИВАЯ ДОЛИНА — stylesheet
+   Author: Annemarie. Editor: Notepad. Platform: 386SX.
+   Style: 1994-95, 256 colours, 640x480.
+   ============================================================ */
+
+/* The tiled starfield sits on <body> via the background shorthand below.
+   body { background-image: url(space.png) } is done in retro.js so the page
+   still degrades to flat navy if the image 404s. Keep this file free of
+   anything a 1994 browser would choke on: no flexbox, no gradients. */
+
+body {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 16px;
+  margin: 0;
+  padding: 14px 0 30px 0;
+}
+
+a {
+  color: #FFFF00;
+  text-decoration: underline;
+}
+a:visited { color: #FF00FF; }
+a:hover   { color: #00FF00; background-color: #000080; }
+
+/* --- 3D bevel widgets, the 1994 way ------------------------------ */
+button {
+  font-family: Arial, Helvetica, sans-serif;
+  border: 2px outset #C0C0C0;
+  background-color: #C0C0C0;
+  color: #000080;
+}
+button:active {
+  border-style: inset;
+}
+
+input[type=text] {
+  font-family: "Courier New", Courier, monospace;
+  background-color: #FFFFFF;
+  color: #000000;
+}
+
+/* --- <marquee> is Netscape-only; keep the text visible elsewhere -- */
+marquee { display: block; }
+
+#out {
+  /* generous line-height: this panel is meant to be read like a page */
+  line-height: 1.5;
+  min-height: 90px;
+  background-color: #FFFFFF;
+  color: #000000;
+}
+
+#status { color: #000080; }
+#status.err { color: #CC0000; font-weight: bold; }
+#outmeta { color: #666666; }
+
+/* Blinking output caret, so the panel looks like it is typing. */
+.caret {
+  font-weight: bold;
+  color: #000080;
+  animation: blink-caret 1s steps(1, end) infinite;
+}
+@keyframes blink-caret {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+/* Netscape 2 never heard of @keyframes; it just shows the caret solid. */
+
+/* Censor blocks from the book: the █ characters get their own colour. */
+#out .blocked { color: #CC0000; }
+
+#counter { letter-spacing: 2px; }
+
+/* --- Print, because some 1995 users did that ------------------------ */
+@media print {
+  body { background: #FFFFFF; color: #000000; }
+  input, button, marquee { display: none; }
+  a { color: #000000; }
+}

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Счастливая Долина ★ Annemarie's Valley ★ Home Page</title>
+<meta name="description" content="Генератор текстов по книге Аннемари Шварценбах 'Счастливая долина'. Сделано в 1995.">
+<meta name="generator" content="Notepad">
+<meta name="author" content="Аннемари">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body bgcolor="#000080" text="#000000" link="#FFFF00" vlink="#FF00FF" alink="#00FF00">
+
+<center>
+
+<!-- ===== EMAIL BANNER (the 'under construction' strip) ===== -->
+<table width="600" border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFF00">
+<tr><td align="center" height="20">
+<font face="Arial" size="2">
+<b><blink>★ ВНИМАНИЕ ★ ЭТА СТРАНИЦА НАХОДИТСЯ В СТАДИИ РАЗРАБОТКИ ★</blink></b>
+&nbsp;&nbsp;|&nbsp;&nbsp;
+<marquee width="150" scrollamount="3"><b>Coming soon!</b></marquee>
+</font>
+</td></tr>
+</table>
+
+<br>
+
+<!-- ===== TITLE BLOCK ===== -->
+<table width="600" border="0" cellpadding="0" cellspacing="0" bgcolor="#C0C0C0">
+<tr>
+  <td width="100" align="center" bgcolor="#000080">
+    <font face="Times New Roman" size="5" color="#FFFF00"><b>★</b></font>
+  </td>
+  <td align="center" height="58">
+    <font face="Times New Roman" size="6" color="#000080"><b>СЧАСТЛИВАЯ ДОЛИНА</b></font><br>
+    <font face="Times New Roman" size="2" color="#800000">
+      <i>Das Glückliche Tal — личная страничка Аннемари Шварценбах</i>
+    </font>
+  </td>
+  <td width="100" align="center" bgcolor="#800000">
+    <font face="Times New Roman" size="5" color="#00FF00"><b>★</b></font>
+  </td>
+</tr>
+</table>
+
+<!-- ===== RAINBOW DIVIDER ===== -->
+<table width="600" border="0" cellpadding="0" cellspacing="0" height="6">
+<tr>
+  <td bgcolor="#FF0000" width="17%"></td>
+  <td bgcolor="#FF9900" width="17%"></td>
+  <td bgcolor="#FFFF00" width="17%"></td>
+  <td bgcolor="#00FF00" width="17%"></td>
+  <td bgcolor="#00CCFF" width="16%"></td>
+  <td bgcolor="#0000FF" width="16%"></td>
+</tr>
+</table>
+
+<br>
+
+<font face="Times New Roman" size="3">
+<marquee width="600" scrollamount="2" bgcolor="#000080">
+<font color="#00FF00">Добро пожаловать ★ Willkommen ★ Besuchen Sie mein Tal ★
+Прокатитесь на карусели из горных долин ★ Mein Tal ist das glücklichste ★</font>
+</marquee>
+</font>
+
+<br>
+
+<!-- ===== NAVIGATION TABLE ===== -->
+<table width="600" border="0" cellpadding="0" cellspacing="0" bgcolor="#C0C0C0">
+<tr><td align="center" bgcolor="#000080" height="18">
+<font face="Arial" size="2" color="#FFFFFF"><b>══════════ НАВИГАЦИЯ ══════════</b></font>
+</td></tr>
+<tr><td align="center" height="26" bgcolor="#C0C0C0">
+<font face="Arial" size="2">
+<a href="#generator">Генератор</a> ·
+<a href="#about">О книге</a> ·
+<a href="#howto">Как это работает</a> ·
+<a href="#links">Ссылки</a> ·
+<a href="mailto:annemarie@tal.ru"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="почта" width="16" height="12" border="0" align="absmiddle">написать мне</a>
+</font>
+</td></tr>
+</table>
+
+<br>
+
+<!-- ===== MAIN CONTENT ===== -->
+<table width="600" border="0" cellpadding="8" cellspacing="0" bgcolor="#FFFFFF">
+
+<!-- INTRO -->
+<tr><td bgcolor="#FFFFCC" border="1">
+<font face="Times New Roman" size="3">
+<b>Здравствуйте, и добро пожаловать в мою долину!</b><br><br>
+Эта страница — маленькая машина, которая собирает для вас отрывки из книги
+<b>Аннемари Шварценбах «Счастливая долина»</b> (<i>Das Glückliche Tal</i>, 1952).
+Напишите по-русски, о чём думаете, — а я отвечу случайными кусками из книги,
+переведёнными на русский и от первого лица девушки.<br><br>
+<font size="2" color="#666666">В основе программы — {{ sentences }} предложений, вычитанных из PDF.
+Программа работает, честно говоря, неплохо. Или нет.</font>
+</font>
+</td></tr>
+
+<tr><td height="8" bgcolor="#FFFFFF" colspan="1"></td></tr>
+
+<!-- GENERATOR -->
+<tr><td id="generator" bgcolor="#DDDDDD" border="1">
+<font face="Times New Roman" size="3">
+
+<center><font size="5" color="#000080"><b>★ ГЕНЕРАТОР СЧАСТЛИВОЙ ДОЛИНЫ ★</b></font></center>
+<br>
+
+<center>
+<form id="genform" onsubmit="return false;">
+<font face="Arial" size="2">
+Напишите фразу по-русски:<br>
+</font>
+<input type="text" id="phrase" name="phrase" size="46" maxlength="160"
+       value="я иду в горы и там нахожу снег"
+       style="font-family: 'Courier New'; font-size: 14px; border: 2px inset #C0C0C0; padding: 4px;"
+       onkeydown="if(event.keyCode==13){ generate(); }">
+<br><br>
+<button type="button" id="go" onclick="generate()"
+        style="font-family: Arial; font-size: 13px; font-weight: bold; padding: 5px 18px; cursor: pointer;">СОЗДАТЬ ТЕКСТ</button>
+&nbsp;
+<button type="button" id="speakBtn" onclick="speakCurrent()"
+        style="font-family: Arial; font-size: 13px; padding: 5px 12px; cursor: pointer;">🔊 ПРОЧИТАТЬ</button>
+&nbsp;
+<button type="button" onclick="randomPhrase()"
+        style="font-family: Arial; font-size: 13px; padding: 5px 12px; cursor: pointer;">🎲 СЛУЧАЙНАЯ ФРАЗА</button>
+</form>
+</center>
+
+<br>
+<center><font face="Arial" size="2" id="status">Готов. Жду вашу фразу.</font></center>
+<br>
+
+<!-- OUTPUT PANEL -->
+<table width="100%" border="2" cellpadding="10" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+  <td bgcolor="#000080" height="20" align="center">
+    <font face="Arial" size="2" color="#00FF00"><b>════════ ВАШ ТЕКСТ ════════</b></font>
+  </td>
+</tr>
+<tr>
+  <td bgcolor="#FFFFFF" align="left" valign="top">
+    <font face="Times New Roman" size="4" id="out" color="#000000">
+    Нажмите «СОЗДАТЬ ТЕКСТ», и здесь появится отрывок из Счастливой Долины.
+    </font>
+    <p align="right"><font face="Arial" size="2" id="outmeta">&nbsp;</font></p>
+  </td>
+</tr>
+</table>
+
+</font>
+</td></tr>
+
+<tr><td height="8" bgcolor="#FFFFFF"></td></tr>
+
+<!-- ABOUT -->
+<tr><td id="about" bgcolor="#EEEEFF" border="1">
+<font face="Times New Roman" size="3">
+<b>О книге и обо мне</b><br><br>
+В 1947 году швейцарская путешественница <b>Аннемари Шварценбах</b> отправилась
+в Афганистан — в горы Гиндукуша.
+Книга вышла в 1952-м. Долина, о которой она писала, лежит на высоте двух с
+половиной тысяч метров, и добраться туда можно было только пешком.<br><br>
+Страница сделана в 1995 году на 386SX. Диалап. Модем. Визитная карточка. ☎
+</font>
+</td></tr>
+
+<tr><td height="8" bgcolor="#FFFFFF"></td></tr>
+
+<!-- HOWTO -->
+<tr><td id="howto" bgcolor="#EEFFEE" border="1">
+<font face="Times New Roman" size="3">
+<b>Как это работает</b><br>
+<ol>
+  <li>Вы пишете фразу по-русски.</li>
+  <li>Программа переводит её на немецкий и берёт самое длинное слово.</li>
+  <li>Ищет в книге предложения с этим словом и берёт три случайных.</li>
+  <li>Переводит их обратно на русский и чинит женский род.</li>
+</ol>
+<font size="2" color="#666666">Перевод — через Google. Иногда он врёт. Так он и в 1995-м врал.</font>
+</font>
+</td></tr>
+
+<tr><td height="8" bgcolor="#FFFFFF"></td></tr>
+
+<!-- LINKS -->
+<tr><td id="links" bgcolor="#FFFFCC" border="1">
+<font face="Times New Roman" size="3">
+<b>Полезные ссылки</b><br><br>
+<a href="http://www.geocities.com/Heartland/Plains/2384/">★ Ring of Mountain Pages</a><br>
+<a href="http://www.cats.com/">★ Коты в интернете (важно для настроения)</a><br>
+<a href="http://www.geocities.com/SiliconValley/Vista/1495/">★ Valley of the Nets</a><br>
+<a href="http://www.penguin.org/">★ Список рассылки (подпишитесь!)</a><br><br>
+<font size="2" color="#666666">Веб-мастер: я. Хостинг: мой Dial-Up провайдер.
+Хостинг-провайдер не несёт ответственности за содержание.</font>
+</font>
+</td></tr>
+
+</table>
+
+<br>
+
+<!-- ===== COUNTER + BADGES ===== -->
+<table width="600" border="0" cellpadding="0" cellspacing="0" bgcolor="#C0C0C0">
+<tr>
+  <td width="200" align="center" height="34" bgcolor="#000080">
+    <font face="Arial" size="1" color="#FFFFFF">ВЫ ПОСЕТИТЕЛЬ №</font><br>
+    <font face="Courier New" size="4" color="#00FF00" id="counter">000000{{ hits }}</font>
+  </td>
+  <td align="center">
+    <font face="Arial" size="2" color="#000080">
+    <b>Лучше всего смотрится в</b><br>
+    Netscape Navigator 2.0 &nbsp;·&nbsp; 256 цветов &nbsp;·&nbsp; 640x480
+    </font>
+  </td>
+</tr>
+</table>
+
+<br>
+
+<font face="Arial" size="1" color="#FFFFFF">
+<marquee scrollamount="3">★ СЧАСТЛИВАЯ ДОЛИНА ★ Annemarie Schwarzenbach ★
+Das Glückliche Tal ★ 1947 ★ 1952 ★ 1995 ★ <blink>НОВЫЙ ТЕКСТ КАЖДЫЙ ДЕНЬ</blink> ★
+СЧАСТЛИВОЙ ДОЛИНЫ ВАМ ★</marquee>
+</font>
+
+<br>
+<center>
+<font face="Times New Roman" size="1" color="#C0C0C0">
+© 1995 Эта страница сделана вручную.<br>
+Последнее обновление: {{ year }}. Счётчик обновляется при каждом визите.<br>
+<font color="#808080">Никакие Netscape Corporation не имеют отношения к этому тексту.</font>
+</font>
+</center>
+
+</center>
+
+<script src="{{ url_for('static', filename='retro.js') }}"></script>
+</body>
+</html>
