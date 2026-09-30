@@ -74,6 +74,7 @@
 <tr><td align="center" height="26" bgcolor="#C0C0C0">
 <font face="Arial" size="2">
 <a href="#generator">Генератор</a> ·
+<a href="#dialogue" id="navDialog">Диалог</a> ·
 <a href="#about">О книге</a> ·
 <a href="#howto">Как это работает</a> ·
 <a href="#links">Ссылки</a> ·
@@ -103,7 +104,7 @@
 <tr><td height="8" bgcolor="#FFFFFF" colspan="1"></td></tr>
 
 <!-- GENERATOR -->
-<tr><td id="generator" bgcolor="#DDDDDD" border="1">
+<tr id="row-generator"><td id="generator" bgcolor="#DDDDDD" border="1">
 <font face="Times New Roman" size="3">
 
 <center><font size="5" color="#000080"><b>★ ГЕНЕРАТОР СЧАСТЛИВОЙ ДОЛИНЫ ★</b></font></center>
@@ -132,6 +133,7 @@
 
 <br>
 <center><font face="Arial" size="2" id="status">Готов. Жду вашу фразу.</font></center>
+<center><font face="Arial" size="2" id="resumeWrap" style="display: none;"><br><a href="#dialogue" onclick="showDialogue(); return false;" id="resumeLink">Продолжить диалог (0) →</a></font></center>
 <br>
 
 <!-- OUTPUT PANEL -->
@@ -154,10 +156,72 @@
 </font>
 </td></tr>
 
-<tr><td height="8" bgcolor="#FFFFFF"></td></tr>
+<tr class="spacer-home"><td height="8" bgcolor="#FFFFFF"></td></tr>
+
+<!-- DIALOGUE (chat-only view, hidden until first «СОЗДАТЬ ТЕКСТ») -->
+<tr id="row-dialogue" style="display: none;"><td id="dialogue" bgcolor="#DDDDDD" border="1">
+<font face="Times New Roman" size="3">
+
+<center><font size="5" color="#000080"><b>★ ДИАЛОГ С ДОЛИНОЙ ★</b></font></center>
+<center><font face="Arial" size="2" color="#666666">все ваши фразы и ответы долины — <span id="chatCount">0</span> шт.</font></center>
+<br>
+
+<table width="100%" border="2" cellpadding="10" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+  <td bgcolor="#000080" height="20" align="center">
+    <font face="Arial" size="2" color="#00FF00"><b>════════ ОКНО ДИАЛОГА ════════</b></font>
+  </td>
+</tr>
+<tr>
+  <td bgcolor="#FFFFFF" align="left" valign="top">
+    <div id="chatlog">
+      <font face="Times New Roman" size="3" color="#666666" id="chatEmpty">
+      Пока пусто. Напишите фразу внизу — долина ответит.
+      </font>
+    </div>
+  </td>
+</tr>
+</table>
+
+<br>
+
+<center>
+<form id="chatform" onsubmit="return false;">
+<font face="Arial" size="2">
+Напишите фразу по-русски:<br>
+</font>
+<input type="text" id="chatPhrase" name="chatPhrase" size="46" maxlength="160"
+       value=""
+       style="font-family: 'Courier New'; font-size: 14px; border: 2px inset #C0C0C0; padding: 4px;"
+       onkeydown="if(event.keyCode==13){ chatSend(); }">
+<br><br>
+<button type="button" id="chatGo" onclick="chatSend()"
+        style="font-family: Arial; font-size: 13px; font-weight: bold; padding: 5px 18px; cursor: pointer;">СОЗДАТЬ ТЕКСТ</button>
+&nbsp;
+<button type="button" onclick="chatRandom()"
+        style="font-family: Arial; font-size: 13px; padding: 5px 12px; cursor: pointer;">🎲 СЛУЧАЙНАЯ ФРАЗА</button>
+&nbsp;
+<button type="button" onclick="speakCurrent()"
+        style="font-family: Arial; font-size: 13px; padding: 5px 12px; cursor: pointer;">🔊 ПРОЧИТАТЬ</button>
+<br><br>
+<button type="button" onclick="clearDialogue()"
+        style="font-family: Arial; font-size: 12px; padding: 4px 10px; cursor: pointer;">СТЕРЕТЬ ДИАЛОГ</button>
+&nbsp;
+<button type="button" onclick="showHome()"
+        style="font-family: Arial; font-size: 12px; padding: 4px 10px; cursor: pointer;">← НА ГЛАВНУЮ</button>
+</form>
+</center>
+
+<br>
+<center><font face="Arial" size="2" id="chatStatus">Готов. Жду вашу фразу.</font></center>
+
+</font>
+</td></tr>
+
+<tr class="spacer-home"><td height="8" bgcolor="#FFFFFF"></td></tr>
 
 <!-- ABOUT -->
-<tr><td id="about" bgcolor="#EEEEFF" border="1">
+<tr id="row-about"><td id="about" bgcolor="#EEEEFF" border="1">
 <font face="Times New Roman" size="3">
 <b>О книге и обо мне</b><br><br>
 В 1947 году швейцарская путешественница <b>Аннемари Шварценбах</b> отправилась
@@ -168,10 +232,10 @@
 </font>
 </td></tr>
 
-<tr><td height="8" bgcolor="#FFFFFF"></td></tr>
+<tr class="spacer-home"><td height="8" bgcolor="#FFFFFF"></td></tr>
 
 <!-- HOWTO -->
-<tr><td id="howto" bgcolor="#EEFFEE" border="1">
+<tr id="row-howto"><td id="howto" bgcolor="#EEFFEE" border="1">
 <font face="Times New Roman" size="3">
 <b>Как это работает</b><br>
 <ol>
@@ -184,10 +248,10 @@
 </font>
 </td></tr>
 
-<tr><td height="8" bgcolor="#FFFFFF"></td></tr>
+<tr class="spacer-home"><td height="8" bgcolor="#FFFFFF"></td></tr>
 
 <!-- LINKS -->
-<tr><td id="links" bgcolor="#FFFFCC" border="1">
+<tr id="row-links"><td id="links" bgcolor="#FFFFCC" border="1">
 <font face="Times New Roman" size="3">
 <b>Полезные ссылки</b><br><br>
 <a href="http://www.geocities.com/Heartland/Plains/2384/">★ Ring of Mountain Pages</a><br>
