@@ -203,9 +203,10 @@ def _squash_blocks(text: str) -> str:
 
 
 def remove_with_mark(text: str, phrase: str) -> str:
-    if phrase not in text:
+    match = re.search(rf"\b{re.escape(phrase)}\b[^\w\s]?", text, flags=re.IGNORECASE)
+    if not match:
         return text
-    text = re.sub(rf"\b{re.escape(phrase)}\b[^\w\s]?", "", text, count=1)
+    text = text[: match.start()] + text[match.end():]
     text = text.lstrip()
     if text:
         text = text[0].upper() + text[1:]
@@ -273,16 +274,52 @@ TRANSLATE_ATTEMPTS = 3
 
 
 async def _translate_retry(text: str, src: str, dest: str) -> str:
-    """Google drops connections; a 1995 dial-up page retried on its own."""
+    """Google drops connections; a 1995 dial-up page retried on its own.
+
+    If Google rate-limits us (HTTP 429) googletrans silently echoes the
+    input back, so an echo also counts as a failure and we fall through
+    to the MyMemory fallback below.
+    """
     last_error: Exception | None = None
     for attempt in range(TRANSLATE_ATTEMPTS):
         try:
-            return await translate(text, src=src, dest=dest)
+            out = await translate(text, src=src, dest=dest)
+            if out.strip() and out.strip() != text.strip():
+                return out
+            last_error = RuntimeError("переводчик вернул исходный текст")
+            break  # echo won't heal on retry, go straight to the fallback
         except Exception as exc:  # network flakiness, timeouts, bad gateway
             last_error = exc
             if attempt < TRANSLATE_ATTEMPTS - 1:
                 await asyncio.sleep(0.6 * (attempt + 1))
-    raise RuntimeError(f"Переводчик не отвечает: {last_error}")
+    try:
+        return await _mymemory_translate(text, src=src, dest=dest)
+    except Exception as exc:
+        raise RuntimeError(f"Переводчик не отвечает: {last_error}; запасной тоже: {exc}")
+
+
+async def _mymemory_translate(text: str, src: str, dest: str) -> str:
+    """Free fallback backend (no key needed for demo volumes)."""
+    import httpx
+
+    params = {"q": text, "langpair": f"{src}|{dest}"}
+    last_error: Exception | None = None
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        for attempt in range(TRANSLATE_ATTEMPTS):
+            try:
+                resp = await client.get(
+                    "https://api.mymemory.translated.net/get", params=params
+                )
+                resp.raise_for_status()
+                out = ((resp.json().get("responseData") or {}).get("translatedText") or "").strip()
+                if not out or "MYMEMORY WARNING" in out or "QUERY LENGTH LIMIT" in out:
+                    raise RuntimeError(f"отказ: {out[:120]}")
+                return out
+            except Exception as exc:
+                last_error = exc
+                if attempt < TRANSLATE_ATTEMPTS - 1:
+                    await asyncio.sleep(0.6 * (attempt + 1))
+    raise RuntimeError(f"запасной переводчик не отвечает: {last_error}")
 
 
 async def generate(user_phrase: str) -> dict:

@@ -126,6 +126,28 @@ marquee { display: block; }
 
 #counter { letter-spacing: 2px; }
 
+/* --- Doom fade: everything dims except the dialogue, which turns B&W --- */
+/* Veil sits above the page (z 900) but below the dialogue cell (z 1000),
+   so only the dialogue stays readable while the rest sinks into black. */
+#doom-veil {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 900;
+  transition: opacity 1.2s linear;
+}
+#dialogue {
+  position: relative;
+  z-index: 1000;
+  transition: filter 1.2s linear;
+  filter: grayscale(0);
+}
+
 /* --- Print, because some 1995 users did that ------------------------ */
 @media print {
   body { background: #FFFFFF; color: #000000; }

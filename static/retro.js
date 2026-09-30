@@ -118,6 +118,40 @@
   }
 
   // ------------------------------------------------------------------ //
+  // Doom fade: session-only counter (resets on reload).
+  // Each successful dialogue exchange darkens everything behind a veil
+  // and drains the dialogue window itself to black-and-white.
+  // Complete after DOOM_STEPS interactions.
+  // ------------------------------------------------------------------ //
+  var DOOM_STEPS = 20;
+  var doomCount = 0;
+
+  function doomProgress() {
+    return Math.min(doomCount / DOOM_STEPS, 1);
+  }
+
+  function applyDoom() {
+    var p = doomProgress();
+    var veil = document.getElementById("doom-veil");
+    if (veil) { veil.style.opacity = (p * 0.93).toFixed(3); }
+    var dlg = document.getElementById("dialogue");
+    if (dlg) {
+      dlg.style.filter = "grayscale(" + p.toFixed(3) + ") brightness(" +
+        (1 - 0.12 * p).toFixed(3) + ")";
+    }
+  }
+
+  function bumpDoom() {
+    if (doomCount < DOOM_STEPS) { doomCount += 1; }
+    applyDoom();
+  }
+
+  function doomSuffix(base) {
+    if (doomCount <= 0) { return base; }
+    return base + " · темнота " + doomCount + "/" + DOOM_STEPS + ".";
+  }
+
+  // ------------------------------------------------------------------ //
   // View switching: home sections <-> chat-only dialogue
   // ------------------------------------------------------------------ //
   function setRowVisible(row, visible) {
@@ -349,10 +383,11 @@
 
         if (pending.parentNode) { pending.parentNode.removeChild(pending); }
         typeBotNode(entry, history.length - 1);
+        bumpDoom();
 
-        setStatus(data.keyword_matched
+        setStatus(doomSuffix(data.keyword_matched
           ? "Готово! Нажмите «ПРОЧИТАТЬ», чтобы услышать."
-          : "Готово, но ключевое слово в книге не встретилось.");
+          : "Готово, но ключевое слово в книге не встретилось."));
       })
       .catch(function (err) {
         if (pending.parentNode) { pending.parentNode.removeChild(pending); }
@@ -420,6 +455,8 @@
     history = [];
     saveHistory();
     renderHistory();
+    doomCount = 0;
+    applyDoom();
     setChatStatus("Диалог стёрт. Долина всё забыла.");
   }
 
@@ -528,6 +565,7 @@
   }
 
   renderHistory();
+  applyDoom(); // session-only: a reload always starts bright again
   if (window.location.hash === "#dialogue" && history.length) {
     showDialogue();
   }
