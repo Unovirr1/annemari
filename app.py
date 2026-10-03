@@ -133,6 +133,9 @@ if __name__ == "__main__":
         if os.environ.get("PORT")
         else _free_port(5000)
     )
+    # PaaS hosts (Render/Railway/Fly/...) inject PORT and need 0.0.0.0;
+    # local runs stay on loopback.
+    host = "0.0.0.0" if os.environ.get("PORT") else "127.0.0.1"
     threading.Thread(target=_warm_cache, name="corpus-warm", daemon=True).start()
-    print(f"* Счастливая Долина: http://127.0.0.1:{port}")
-    app.run(host="127.0.0.1", port=port, debug=False)
+    print(f"* Счастливая Долина: http://{host}:{port}")
+    app.run(host=host, port=port, debug=False)

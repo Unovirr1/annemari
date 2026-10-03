@@ -161,6 +161,36 @@ marquee { display: block; }
   transition: opacity 3s linear;
 }
 
+/* --- Doom final: the dialogue window itself turns black ----------------- */
+/* Only text survives: message bubbles, panels and input boxes dissolve to
+   black; dialogue text, meta lines and button labels stay readable. */
+#dialogue td, #dialogue input, #dialogue button,
+#chatlog, .msg-user, .msg-bot, .msg-pending {
+  transition: background-color 1.6s linear, color 1.6s linear,
+    border-color 1.6s linear;
+}
+body.doom-final #dialogue,
+body.doom-final #dialogue td,
+body.doom-final #chatlog,
+body.doom-final .msg-user,
+body.doom-final .msg-bot,
+body.doom-final .msg-pending,
+body.doom-final #dialogue input,
+body.doom-final #dialogue button {
+  background-color: #000000;
+  border-color: #000000;
+}
+body.doom-final .msg-bot { color: #D8D8D8; }
+body.doom-final .msg-bot .blocked { color: #CC0000; }
+body.doom-final .msg-user { color: #00FF00; }
+body.doom-final .msg-meta { color: #999999; }
+body.doom-final .msg-meta a { color: #00FF00; }
+body.doom-final #chatStatus { color: #BBBBBB; }
+body.doom-final #chatCount { color: #BBBBBB; }
+body.doom-final #dialogue font { color: #BBBBBB; }
+body.doom-final #dialogue input { color: #D8D8D8; }
+body.doom-final #dialogue button { color: #D8D8D8; }
+
 /* --- Real ad rails (AdSense skyscrapers), fixed to the sides ------------ */
 .ad-rail {
   position: fixed;

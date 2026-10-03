@@ -119,32 +119,47 @@
 
   // ------------------------------------------------------------------ //
   // Doom fade: session-only counter (resets on reload).
-  // Each successful dialogue exchange darkens everything behind a veil
-  // and drains the dialogue window itself to black-and-white.
-  // Complete after DOOM_STEPS interactions.
+  // Layer 1 (DOOM_STEPS phrases): everything behind a veil darkens and the
+  // dialogue window drains to black-and-white; ghosts start drifting.
+  // Layer 2 (DOOM_SECOND more phrases): the veil goes to pure black and the
+  // ghosts dissolve — only the dialogue window and its buttons stay visible.
   // ------------------------------------------------------------------ //
   var DOOM_STEPS = 4;
+  var DOOM_SECOND = 4;
+  var DOOM_TOTAL = DOOM_STEPS + DOOM_SECOND;
+  var DOOM_AUTO_AFTER = DOOM_TOTAL + 2; // 2 more phrases — then it talks to itself
   var doomCount = 0;
 
   function doomProgress() {
     return Math.min(doomCount / DOOM_STEPS, 1);
   }
 
+  function doomSecondProgress() {
+    return Math.min(Math.max(doomCount - DOOM_STEPS, 0) / DOOM_SECOND, 1);
+  }
+
   function applyDoom() {
     var p = doomProgress();
+    var q = doomSecondProgress();
     var veil = document.getElementById("doom-veil");
-    if (veil) { veil.style.opacity = (p * 0.93).toFixed(3); }
+    if (veil) { veil.style.opacity = (p * 0.93 + q * 0.07).toFixed(3); }
     var dlg = document.getElementById("dialogue");
     if (dlg) {
       dlg.style.filter = "grayscale(" + p.toFixed(3) + ") brightness(" +
         (1 - 0.12 * p).toFixed(3) + ")";
     }
+    // Final state: windows dissolve, only text (and button labels) survives.
+    document.body.classList.toggle("doom-final", q >= 1);
   }
 
   function bumpDoom() {
-    if (doomCount < DOOM_STEPS) { doomCount += 1; }
+    if (doomCount < DOOM_AUTO_AFTER) { doomCount += 1; }
     applyDoom();
-    if (doomProgress() >= 1) { startGhosts(); }
+    if (doomSecondProgress() > 0) {
+      stopGhosts(); // layer 2: pure black, ghosts dissolve
+    } else if (doomProgress() >= 1) {
+      startGhosts();
+    }
   }
 
   /*function doomSuffix(base) {
@@ -170,7 +185,7 @@
   var ghostTimer = null;
 
   function spawnGhost() {
-    if (doomProgress() < 1) { return; }
+    if (doomProgress() < 1 || doomSecondProgress() > 0) { return; }
     if (document.querySelectorAll(".doom-ghost").length >= GHOST_MAX) { return; }
     var img = document.createElement("img");
     img.className = "doom-ghost";
@@ -319,10 +334,10 @@
     while (chatlogEl.firstChild) { chatlogEl.removeChild(chatlogEl.firstChild); }
   }
 
-  function appendUserNode(phrase) {
+  function appendUserNode(phrase, auto) {
     var div = document.createElement("div");
     div.className = "msg-user";
-    div.textContent = "ВЫ: " + phrase;
+    div.textContent = (auto ? "ДОЛИНА ✦: " : "ВЫ: ") + phrase;
     chatlogEl.appendChild(div);
     scrollChatToBottom();
     return div;
@@ -361,7 +376,7 @@
       chatlogEl.appendChild(empty);
     } else {
       for (var i = 0; i < history.length; i++) {
-        appendUserNode(history[i].phrase);
+        appendUserNode(history[i].phrase, history[i].auto);
         appendBotNode(history[i], i);
       }
     }
@@ -386,7 +401,7 @@
   // ------------------------------------------------------------------ //
   var busy = false;
 
-  function submitPhrase(phrase) {
+  function submitPhrase(phrase, auto) {
     phrase = (phrase || "").replace(/^\s+|\s+$/g, "");
     if (!phrase) {
       setStatus("Пустая фраза! Напишите хоть что-нибудь.", true);
@@ -397,13 +412,15 @@
     if (goEl) { goEl.disabled = true; }
     if (chatGoEl) { chatGoEl.disabled = true; }
     showDialogue();
-    setStatus("Соединение с переводчиком...");
+    setStatus(auto
+      ? "..."
+      : "Соединение с переводчиком...");
 
     // Remove the "empty" placeholder on first message.
     var placeholder = document.getElementById("chatEmpty");
     if (placeholder) { placeholder.parentNode.removeChild(placeholder); }
 
-    appendUserNode(phrase);
+    appendUserNode(phrase, auto);
     var pending = document.createElement("div");
     pending.className = "msg-pending";
     pending.textContent = "Долина думает... ▌";
@@ -429,6 +446,7 @@
 
         var entry = {
           phrase: phrase,
+          auto: !!auto,
           text: data.text,
           source_de: data.source_de,
           keyword_de: data.keyword_de,
@@ -446,9 +464,14 @@
         typeBotNode(entry, history.length - 1);
         bumpDoom();
 
-        setStatus(data.keyword_matched
-          ? "Готово! Нажмите «ПРОЧИТАТЬ», чтобы услышать."
-          : "Готово, но ключевое слово в книге не встретилось.");
+        if (entry.auto && autoTimer) {
+          setStatus("Почему?");
+        } else {
+          setStatus(data.keyword_matched
+            ? "Готово! Нажмите «ПРОЧИТАТЬ», чтобы услышать."
+            : "Готово, но ключевое слово в книге не встретилось.");
+        }
+        maybeStartAuto();
       })
       .catch(function (err) {
         if (pending.parentNode) { pending.parentNode.removeChild(pending); }
@@ -519,6 +542,7 @@
     doomCount = 0;
     applyDoom();
     stopGhosts();
+    stopAuto();
     setChatStatus("Диалог стёрт. Долина всё забыла.");
   }
 
@@ -618,6 +642,50 @@
   }
 
   // ------------------------------------------------------------------ //
+  // Self-talk: DOOM_AUTO_AFTER successful phrases in, the valley starts
+  // asking itself. Session-only like the rest of the doom. The busy guard
+  // inside submitPhrase keeps rounds from overlapping; ⏹ ХВАТИТ stops it.
+  // ------------------------------------------------------------------ //
+  var AUTO_EVERY_MS = 20000;
+  var autoTimer = null;
+
+  function autoPick() {
+    var last = history.length ? history[history.length - 1].phrase : "";
+    var pick = "";
+    var guard = 0;
+    while ((!pick || pick === last) && guard++ < 30) {
+      pick = PHRASES[Math.floor(Math.random() * PHRASES.length)];
+    }
+    return pick;
+  }
+
+  function autoTick() {
+    if (busy) { return; } // previous reply still coming — catch the next round
+    if (!autoTimer) { return; } // stopped meanwhile
+    submitPhrase(autoPick(), true);
+  }
+
+  function startAuto() {
+    if (autoTimer) { return; }
+    var btn = document.getElementById("autoStop");
+    if (btn) { btn.style.display = ""; }
+    setStatus(" ");
+    autoTimer = setInterval(autoTick, AUTO_EVERY_MS);
+    autoTick();
+  }
+
+  function stopAuto() {
+    if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+    var btn = document.getElementById("autoStop");
+    if (btn) { btn.style.display = "none"; }
+    setChatStatus("Долина умолкла. Ваш черёд.");
+  }
+
+  function maybeStartAuto() {
+    if (!autoTimer && doomCount >= DOOM_AUTO_AFTER) { startAuto(); }
+  }
+
+  // ------------------------------------------------------------------ //
   // Wire up
   // ------------------------------------------------------------------ //
   if (navDialogEl) {
@@ -644,6 +712,7 @@
   window.generate = generate;
   window.chatSend = chatSend;
   window.chatRandom = chatRandom;
+  window.stopAuto = stopAuto;
   window.clearDialogue = clearDialogue;
   window.showDialogue = showDialogue;
   window.showHome = showHome;
