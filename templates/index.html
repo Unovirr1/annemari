@@ -95,10 +95,10 @@
 Эта страница — <b>гадание по книге Аннемари Шварценбах «Счастливая долина»</b>
 (<i>Das Glückliche Tal</i>, 1952).
 Подумайте о том, что вас тревожит, и спросите у книги обо всём, с чем нужна
-помощь, — о любви, дороге, страхе или трудном выборе.
-Напишите свой вопрос по-русски, — а книга ответит вам отрывком,
+помощь. Книга ответит на вопросы о любви, жизни, страхе или трудном выборе.
+Напишите свой вопрос, а книга ответит вам отрывком,
 переведённым на русский.<br><br>
-<font size="2" color="#666666">В основе программы — {{ sentences }} предложений, вычитанных из PDF.
+<font size="2" color="#666666">В основе программы {{ sentences }} предложений, вычитанных из PDF.
 Программа работает, честно говоря, неплохо. Или нет.</font>
 </font>
 </td></tr>
@@ -165,7 +165,7 @@
 <font face="Times New Roman" size="3">
 
 <center><font size="5" color="#000080"><b>★ ДИАЛОГ С ДОЛИНОЙ ★</b></font></center>
-<center><font face="Arial" size="2" color="#666666">все ваши фразы и ответы долины — <span id="chatCount">0</span> шт.</font></center>
+<center><font face="Arial" size="2" color="#666666">все ваши фразы и ответы долины:  <span id="chatCount">0</span> шт.</font></center>
 <br>
 
 <table width="100%" border="2" cellpadding="10" cellspacing="0" bgcolor="#FFFFFF">
@@ -178,7 +178,7 @@
   <td bgcolor="#FFFFFF" align="left" valign="top">
     <div id="chatlog">
       <font face="Times New Roman" size="3" color="#666666" id="chatEmpty">
-      Пока пусто. Напишите фразу внизу — долина ответит.
+      Пока пусто. Напишите фразу внизу и долина ответит.
       </font>
     </div>
   </td>
@@ -229,10 +229,10 @@
 Так гадали всегда: задаёшь книге вопрос и открываешь её на случайной
 странице. <br><br>
 В 1947 году швейцарская путешественница <b>Аннемари Шварценбах</b> отправилась
-в Афганистан — в горы Гиндукуша.
+в Афганистан, в горы Гиндукуша.
 Книга вышла в 1952-м. Долина, о которой она писала, лежит на высоте двух с
 половиной тысяч метров, и добраться туда можно было только пешком.<br><br>
-Не бойтесь спрашивать о чём угодно — книга не сердится.
+Не бойтесь спрашивать о чём угодно, книга не сердится.
 Страница сделана в 1995 году на 386SX. Диалап. Модем. Визитная карточка. ☎
 </font>
 </td></tr>
@@ -244,12 +244,12 @@
 <font face="Times New Roman" size="3">
 <b>Как это работает</b><br>
 <ol>
-  <li>Вы пишете фразу по-русски.</li>
-  <li>Программа переводит её на немецкий и берёт самое важноеое слово.</li>
+  <li>Вы пишете фразу по-русски. Грамматическая верность не обязательна.</li>
+  <li>Программа переводит её на немецкий и берёт самое важное слово.</li>
   <li>Ищет в книге предложения с этим словом и берёт три случайных.</li>
   <li>Переводит их обратно на русский и чинит женский род.</li>
 </ol>
-<font size="2" color="#666666">Перевод — через Google. Иногда он врёт.</font>
+<font size="2" color="#666666">Перевод через Google, иногда он врёт.</font>
 </font>
 </td></tr>
 
@@ -308,6 +308,36 @@ Das Glückliche Tal ★ 1947 ★ 1952 ★ 1995 ★ <blink>НОВЫЙ ТЕКСТ 
 </center>
 
 <div id="doom-veil"></div>
+<!-- Doom ghosts: B&W Hindu Kush landscapes (the book's setting, 1947).
+     Photos: NASA astronaut photography, public domain, via Wikimedia Commons:
+     ISS060-E-80906 (Kuh-e Bandaka / Panj Valley), ISS047-E-139706 (Noshaq /
+     Tirich Mir / Panj Valley), ISS057-E-106583 (Panj Valley / Chiantar),
+     ISS057-E-106545 (Kuh-e Bandaka), ISS060-E-80909 (Panj Valley panorama),
+     "Snow in the Hindu Kush". Local copies in static/doom/. -->
+
+<!-- ===== REAL ADS (Google AdSense) — side rails, hidden on narrow screens.
+     ЗАМЕНИТЕ ca-pub-XXXXXXXXXXXXXXXX на свой Publisher ID (и слоты ниже),
+     иначе объявления не покажутся. Подробнее: https://www.google.com/adsense/ -->
+<div class="ad-rail ad-left">
+  <font face="Arial" size="1" color="#C0C0C0">РЕКЛАМА</font><br>
+  <ins class="adsbygoogle"
+       style="display:inline-block;width:160px;height:600px"
+       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+       data-ad-slot="1111111111"></ins>
+</div>
+<div class="ad-rail ad-right">
+  <font face="Arial" size="1" color="#C0C0C0">РЕКЛАМА</font><br>
+  <ins class="adsbygoogle"
+       style="display:inline-block;width:160px;height:600px"
+       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+       data-ad-slot="2222222222"></ins>
+</div>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
 
 <script src="{{ url_for('static', filename='retro.js') }}"></script>
 </body>

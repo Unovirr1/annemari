@@ -148,6 +148,34 @@ marquee { display: block; }
   filter: grayscale(0);
 }
 
+/* --- Doom ghosts: B&W Hindu Kush landscapes drifting over the blackout -- */
+/* z 950: above the veil (900) and ad rails (500), below the dialogue
+   cell (1000, opaque) — so they never cover or block the dialogue. */
+.doom-ghost {
+  position: fixed;
+  z-index: 950;
+  pointer-events: none;
+  filter: grayscale(1) contrast(1.05) brightness(0.9);
+  border: 2px outset #C0C0C0;
+  opacity: 0;
+  transition: opacity 3s linear;
+}
+
+/* --- Real ad rails (AdSense skyscrapers), fixed to the sides ------------ */
+.ad-rail {
+  position: fixed;
+  top: 120px;
+  width: 160px;
+  min-height: 600px;
+  z-index: 500;
+  text-align: center;
+}
+.ad-left { left: 8px; }
+.ad-right { right: 8px; }
+@media (max-width: 1020px) {
+  .ad-rail { display: none; }
+}
+
 /* --- Print, because some 1995 users did that ------------------------ */
 @media print {
   body { background: #FFFFFF; color: #000000; }

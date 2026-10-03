@@ -123,7 +123,7 @@
   // and drains the dialogue window itself to black-and-white.
   // Complete after DOOM_STEPS interactions.
   // ------------------------------------------------------------------ //
-  var DOOM_STEPS = 20;
+  var DOOM_STEPS = 4;
   var doomCount = 0;
 
   function doomProgress() {
@@ -144,11 +144,72 @@
   function bumpDoom() {
     if (doomCount < DOOM_STEPS) { doomCount += 1; }
     applyDoom();
+    if (doomProgress() >= 1) { startGhosts(); }
   }
 
-  function doomSuffix(base) {
+  /*function doomSuffix(base) {
     if (doomCount <= 0) { return base; }
     return base + " · темнота " + doomCount + "/" + DOOM_STEPS + ".";
+  }*/
+
+  // ------------------------------------------------------------------ //
+  // Doom ghosts: once the blackout is complete, B&W landscapes of the
+  // Hindu Kush (where the book takes place) drift across the darkness.
+  // Session-only: a reload clears them. pointer-events:none + z 950
+  // (below the opaque dialogue cell) so they never block the dialogue.
+  // ------------------------------------------------------------------ //
+  var GHOST_SRC = [
+    "/static/doom/g1.jpg",
+    "/static/doom/g2.jpg",
+    "/static/doom/g3.jpg",
+    "/static/doom/g4.jpg",
+    "/static/doom/g5.jpg",
+    "/static/doom/g7.jpg"
+  ];
+  var GHOST_MAX = 8;
+  var ghostTimer = null;
+
+  function spawnGhost() {
+    if (doomProgress() < 1) { return; }
+    if (document.querySelectorAll(".doom-ghost").length >= GHOST_MAX) { return; }
+    var img = document.createElement("img");
+    img.className = "doom-ghost";
+    img.alt = "";
+    img.src = GHOST_SRC[Math.floor(Math.random() * GHOST_SRC.length)];
+    var w = 140 + Math.random() * 280; // 140–420 px, random scale
+    img.style.width = Math.round(w) + "px";
+    img.style.height = "auto";
+    var vw = window.innerWidth || 800;
+    var vh = window.innerHeight || 600;
+    img.style.left = Math.round(Math.max(0, Math.random() * (vw - Math.min(w, vw)))) + "px";
+    img.style.top = Math.round(Math.max(0, Math.random() * Math.max(0, vh - 160))) + "px";
+    img.dataset.opacity = (0.25 + Math.random() * 0.35).toFixed(2);
+    var reveal = function () { img.style.opacity = img.dataset.opacity; };
+    img.onload = reveal;
+    document.body.appendChild(img);
+    if (img.complete) { reveal(); }
+    setTimeout(function () {
+      img.style.opacity = "0";
+      setTimeout(function () {
+        if (img.parentNode) { img.parentNode.removeChild(img); }
+      }, 3200);
+    }, 15000 + Math.random() * 10000);
+  }
+
+  function startGhosts() {
+    if (ghostTimer) { return; }
+    spawnGhost();
+    spawnGhost();
+    spawnGhost();
+    ghostTimer = setInterval(spawnGhost, 5000);
+  }
+
+  function stopGhosts() {
+    if (ghostTimer) { clearInterval(ghostTimer); ghostTimer = null; }
+    var all = document.querySelectorAll(".doom-ghost");
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].parentNode) { all[i].parentNode.removeChild(all[i]); }
+    }
   }
 
   // ------------------------------------------------------------------ //
@@ -296,7 +357,7 @@
       empty.setAttribute("size", "3");
       empty.setAttribute("color", "#666666");
       empty.id = "chatEmpty";
-      empty.textContent = "Пока пусто. Напишите фразу внизу — долина ответит.";
+      empty.textContent = "Пока пусто. Напишите фразу внизу и долина ответит.";
       chatlogEl.appendChild(empty);
     } else {
       for (var i = 0; i < history.length; i++) {
@@ -336,7 +397,7 @@
     if (goEl) { goEl.disabled = true; }
     if (chatGoEl) { chatGoEl.disabled = true; }
     showDialogue();
-    setStatus("Соединение с переводчиком... подождите, это же 1995-й.");
+    setStatus("Соединение с переводчиком...");
 
     // Remove the "empty" placeholder on first message.
     var placeholder = document.getElementById("chatEmpty");
@@ -385,9 +446,9 @@
         typeBotNode(entry, history.length - 1);
         bumpDoom();
 
-        setStatus(doomSuffix(data.keyword_matched
+        setStatus(data.keyword_matched
           ? "Готово! Нажмите «ПРОЧИТАТЬ», чтобы услышать."
-          : "Готово, но ключевое слово в книге не встретилось."));
+          : "Готово, но ключевое слово в книге не встретилось.");
       })
       .catch(function (err) {
         if (pending.parentNode) { pending.parentNode.removeChild(pending); }
@@ -457,6 +518,7 @@
     renderHistory();
     doomCount = 0;
     applyDoom();
+    stopGhosts();
     setChatStatus("Диалог стёрт. Долина всё забыла.");
   }
 
@@ -523,7 +585,16 @@
     "мне снятся белые вершины и тишина",
     "я потерялась среди камней и ветра",
     "мы едем верхом по горной дороге",
-    "я пишу письмо домой из долины"
+    "я пишу письмо домой из долины",
+    "расскажи мне о любви",
+    "расскажи мне о смерть",
+    "смерть?",
+    "любовь?",
+    "что меня ждет?",
+    "чего мне ожидать?",
+    "что будет завтра?",
+    "какой путь мне выбрать?",
+    "чего мне стоит ожидать?",
   ];
 
   function randomPhrase() {
